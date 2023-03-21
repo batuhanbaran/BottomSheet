@@ -2,40 +2,25 @@
 //  BottomSheetViewPresentable.swift
 //  
 //
-//  Created by Batuhan Baran on 13.03.2023.
+//  Created by Batuhan Baran on 21.03.2023.
 //
 
 import UIKit
 
-public protocol BottomSheetViewPresentable: AnyObject {
+public protocol BottomSheetViewPresentable {
+    var alpha: CGFloat { get }
     
-    var properties: BottomSheetProperties { get set }
-    var scrollView: UIScrollView? { get }
+    var cornerRadius: CGFloat { get }
     
-    func present(_ contentViewController: UIViewController)
-}
-
-public extension BottomSheetViewPresentable {
+    var shouldRoundTopCorners: Bool { get }
     
-    func present(_ contentViewController: UIViewController) {
-        let bottomSheetViewController = build(for: contentViewController)
-        bottomSheetViewController.modalPresentationStyle = .fullScreen
-        bottomSheetViewController.view.translatesAutoresizingMaskIntoConstraints = false
-        
-        if let keyWindow = UIWindow.key {
-            keyWindow.addSubview(bottomSheetViewController.view)
-            
-            NSLayoutConstraint.activate([
-                bottomSheetViewController.view.trailingAnchor.constraint(equalTo: keyWindow.trailingAnchor),
-                bottomSheetViewController.view.leadingAnchor.constraint(equalTo: keyWindow.leadingAnchor),
-                bottomSheetViewController.view.bottomAnchor.constraint(equalTo: keyWindow.bottomAnchor),
-                bottomSheetViewController.view.topAnchor.constraint(equalTo: keyWindow.topAnchor)
-            ])
-        }
-    }
+    var shouldCloseIfTouchDimmedArea: Bool { get }
     
-    private func build(for contentViewController: UIViewController) -> BottomSheetViewController {
-        let viewModel = BottomSheetViewModel(properties: properties)
-        return BottomSheetViewController(contentViewController: contentViewController, viewModel: viewModel)
-    }
+    var isUserInteractionEnabled: Bool { get }
+    
+    var showDragIndicator: Bool { get }
+    
+    var dragIndicatorColor: UIColor? { get }
+    
+    var size: BottomSheetSize { get }
 }

@@ -5,10 +5,10 @@
 //  Created by Batuhan Baran on 13.03.2023.
 //
 
-import Foundation
+import UIKit
 
-public enum BottomSheetSize {
+public enum BottomSheetSize: Equatable {
     case full
     case half
-    case fix(CGFloat)
+    case fix(pct: CGFloat)
 }

@@ -20,7 +20,7 @@ extension UIApplication {
         } else if let presented = base?.presentedViewController {
             return getTopViewController(base: presented)
         }
+        
         return base
     }
-    
 }
