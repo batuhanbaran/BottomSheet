@@ -104,12 +104,15 @@ public final class BottomSheetViewController: UIViewController {
         
         self.delegate?.bottomSheetViewDidAppear()
         
-        calculateMaxHeight()
+        calculateFullHeight()
         updateContentViewHeight(with: currentSize)
     }
     
     // MARK: - Private methods
     private func addChilds() {
+        /// Validate the content is a UIViewController
+        assert(contentViewController.superclass == UIViewController.self, "The content must be inherit from UIViewController!")
+        
         addChild(overlayViewController)
         view.addSubview(overlayViewController.view)
         overlayViewController.didMove(toParent: self)
@@ -160,7 +163,7 @@ public final class BottomSheetViewController: UIViewController {
         dragIndicator.centerXAnchor.constraint(equalTo: contentViewController.view.centerXAnchor).isActive = true
     }
     
-    private func calculateMaxHeight() {
+    private func calculateFullHeight() {
         if let presentingViewController {
             if presentingViewController.isMember(of: UINavigationController.self),
                let navigationController = presentingViewController as? UINavigationController,
@@ -219,7 +222,7 @@ public final class BottomSheetViewController: UIViewController {
     
     @objc
     private func didPan(_ sender: UIPanGestureRecognizer) {
-        let velocityY = sender.velocity(in: contentViewController.view).y / 120
+        let velocityY = sender.velocity(in: contentViewController.view).y / 80
         let direction = BottomSheetDirection(velocityY)
         
         switch sender.state {
@@ -260,4 +263,3 @@ public final class BottomSheetViewController: UIViewController {
         }
     }
 }
-
