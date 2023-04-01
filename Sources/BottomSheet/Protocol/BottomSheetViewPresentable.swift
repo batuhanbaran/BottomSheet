@@ -8,8 +8,7 @@
 import UIKit
 
 public protocol BottomSheetViewPresentable {
-    var alpha: CGFloat { get }
-    
+   
     var cornerRadius: CGFloat { get }
     
     var shouldRoundTopCorners: Bool { get }
@@ -23,4 +22,19 @@ public protocol BottomSheetViewPresentable {
     var dragIndicatorColor: UIColor? { get }
     
     var size: BottomSheetSize { get }
+    
+}
+
+extension BottomSheetViewPresentable {
+    
+    var alpha: CGFloat {
+        switch size {
+        case .half:
+            return 0.5
+        case .full:
+            return 0.75
+        case .fix(pct: let pct):
+            return pct
+        }
+    }
 }
