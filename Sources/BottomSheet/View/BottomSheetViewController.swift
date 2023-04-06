@@ -64,8 +64,9 @@ public final class BottomSheetViewController: UIViewController {
         self.currentSize = presentable.size
         
         super.init(nibName: "BottomSheetViewController", bundle: .module)
-        self.modalPresentationStyle = .overCurrentContext
-
+        self.modalPresentationStyle = .custom
+        self.transitioningDelegate = self
+        
         addChilds()
         addDragIndicator()
         addTapGesture()
@@ -193,25 +194,26 @@ public final class BottomSheetViewController: UIViewController {
             }
         }
         
-        UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 3, options: .curveEaseInOut, animations: {
+        UIView.animate(withDuration: 0.75, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.1, options: .curveEaseInOut, animations: {
             self.view.layoutIfNeeded()
         }, completion: nil)
         
-        UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 3, options: .curveEaseInOut, animations: {
+        UIView.animate(withDuration: 0.75, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.1, options: .curveEaseInOut, animations: {
             self.overlayViewController.view.backgroundColor = UIColor.black.withAlphaComponent(self.presentable.alpha)
         }, completion: nil)
     }
     
-    private func animateDismissView() {
-        UIView.animate(withDuration: 0.6, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 3, options: .curveEaseInOut, animations: {
+    func animateDismissView(completion: ((Bool) -> Void)? = nil) {
+        UIView.animate(withDuration: 0.75, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.1, options: .curveEaseInOut, animations: {
             self.contentViewController.view.frame.origin.y -= -self.contentViewHeight.constant
             self.view.layoutIfNeeded()
-        }, completion: nil)
+        }, completion: completion)
         
-        UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 3, options: .curveEaseInOut, animations: {
+        UIView.animate(withDuration: 0.75, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.1, options: .curveEaseInOut, animations: {
             self.overlayViewController.view.backgroundColor = UIColor.black.withAlphaComponent(0)
         }) { _ in
             self.dismiss(animated: false)
+            completion?(true)
         }
     }
     
@@ -262,4 +264,19 @@ public final class BottomSheetViewController: UIViewController {
             
         }
     }
+}
+
+// MARK: - UIViewControllerTransitioningDelegate
+extension BottomSheetViewController: UIViewControllerTransitioningDelegate {
+    
+    public func animationController(forPresented presented: UIViewController,
+                                    presenting: UIViewController,
+                                    source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+        BottomSheetViewAnimator(animationType: .present)
+    }
+    
+    public func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+        BottomSheetViewAnimator(animationType: .dismiss)
+    }
+    
 }
