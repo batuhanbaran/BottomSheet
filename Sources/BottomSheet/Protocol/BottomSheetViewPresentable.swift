@@ -8,6 +8,8 @@
 import UIKit
 
 public protocol BottomSheetViewPresentable {
+    
+    var scrollView: UIScrollView? { get set }
    
     var cornerRadius: CGFloat { get }
     

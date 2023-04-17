@@ -150,7 +150,7 @@ public final class BottomSheetViewController: UIViewController {
         guard presentable.isUserInteractionEnabled else { return }
         
         panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(didPan(_:)))
-        contentViewController.view.addGestureRecognizer(panGestureRecognizer)
+        view.addGestureRecognizer(panGestureRecognizer)
     }
     
     private func addDragIndicator() {
@@ -158,7 +158,7 @@ public final class BottomSheetViewController: UIViewController {
         
         contentViewController.view.addSubview(dragIndicator)
         
-        dragIndicator.widthAnchor.constraint(equalToConstant: 56).isActive = true
+        dragIndicator.widthAnchor.constraint(equalToConstant: 40).isActive = true
         dragIndicator.heightAnchor.constraint(equalToConstant: 5).isActive = true
         dragIndicator.topAnchor.constraint(equalTo: contentViewController.view.topAnchor, constant: 8).isActive = true
         dragIndicator.centerXAnchor.constraint(equalTo: contentViewController.view.centerXAnchor).isActive = true
@@ -176,8 +176,8 @@ public final class BottomSheetViewController: UIViewController {
         }
     }
     
-    private func updateContentViewHeight(with currentSize: BottomSheetSize) {
-        self.currentSize = currentSize
+    public func updateContentViewHeight(with size: BottomSheetSize) {
+        self.currentSize = size
         
         switch currentSize {
         case .full:
@@ -224,16 +224,21 @@ public final class BottomSheetViewController: UIViewController {
     
     @objc
     private func didPan(_ sender: UIPanGestureRecognizer) {
-        let velocityY = sender.velocity(in: contentViewController.view).y / 80
-        let direction = BottomSheetDirection(velocityY)
+        let velocityY = sender.velocity(in: view).y / 80
+        let panDirection = BottomSheetDirection(velocityY)
         
         switch sender.state {
         case .changed:
-            guard direction != .up else {
-                break
-            }
-            
             self.contentViewHeight.constant -= velocityY
+            
+            switch panDirection {
+            case .up:
+                guard contentViewHeight.constant > currentSize.value else { break }
+                updateContentViewHeight(with: currentSize)
+            case .down:
+                guard contentViewHeight.constant <= .zero else { break }
+                animateDismissView()
+            }
             
         case .ended:
             switch currentSize {
@@ -278,5 +283,5 @@ extension BottomSheetViewController: UIViewControllerTransitioningDelegate {
     public func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
         BottomSheetViewAnimator(animationType: .dismiss)
     }
-    
+
 }
